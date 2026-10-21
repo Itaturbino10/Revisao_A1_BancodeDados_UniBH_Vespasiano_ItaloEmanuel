@@ -1,0 +1,143 @@
+PRAGMA foreign_keys = ON;
+CREATE TABLE CLIENTE (
+    cpf_cliente VARCHAR(11) PRIMARY KEY,
+    nome_cliente VARCHAR(100) NOT NULL,
+    classe_cnh VARCHAR(20) NOT NULL,
+    numero_cnh INTEGER NOT NULL,
+    endereco_bairro VARCHAR(100) NOT NULL,
+    endereco_cidade VARCHAR(100) NOT NULL,
+    endereco_logradouro VARCHAR(100) NOT NULL,
+    endereco_numero VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE CATEGORIA_VEICULO (
+    id_categoria INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome_categoria VARCHAR(100) NOT NULL,
+    valor_categoria DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE VEICULO (
+    placa_veiculo VARCHAR(7) PRIMARY KEY,
+    id_categoria INTEGER NOT NULL,
+    modelo_veiculo VARCHAR(100) NOT NULL,
+    ano_veiculo INTEGER NOT NULL,
+    cor_veiculo VARCHAR(100) NOT NULL,
+    marca_veiculo VARCHAR(100) NOT NULL,
+    quilometragem_atual DECIMAL(10,3) NOT NULL,
+
+    CONSTRAINT fk_veiculo_categoria
+        FOREIGN KEY (id_categoria)
+        REFERENCES CATEGORIA_VEICULO(id_categoria)
+);
+
+CREATE TABLE LOCACAO (
+    id_locacao INTEGER PRIMARY KEY AUTOINCREMENT,
+    cpf_cliente VARCHAR(11) NOT NULL,
+    placa_veiculo VARCHAR(7) NOT NULL,
+    data_retirada DATE NOT NULL,
+    data_devolucao DATE NOT NULL,
+    quilometragem_retirada DECIMAL(10,3) NOT NULL,
+    valor_total DECIMAL(10,2) NOT NULL,
+
+    CONSTRAINT fk_locacao_cliente
+        FOREIGN KEY (cpf_cliente)
+        REFERENCES CLIENTE(cpf_cliente),
+
+    CONSTRAINT fk_locacao_veiculo
+        FOREIGN KEY (placa_veiculo)
+        REFERENCES VEICULO(placa_veiculo)
+);
+
+-- 1. Categorias de veículos
+INSERT INTO CATEGORIA_VEICULO
+    (id_categoria, nome_categoria, valor_categoria)
+VALUES
+    (1, 'Econômico', 100.00),
+    (2, 'Compacto', 130.00),
+    (3, 'SUV', 250.00),
+    (4, 'Luxo', 450.00),
+    (5, 'Utilitário', 200.00);
+
+-- 2. Clientes
+INSERT INTO CLIENTE
+    (cpf_cliente, nome_cliente, classe_cnh, numero_cnh,
+     endereco_bairro, endereco_cidade, endereco_logradouro,
+     endereco_numero)
+VALUES
+    ('01234567890', 'Ana Silva', 'B', 123456789,
+     'Centro', 'Belo Horizonte', 'Rua das Flores', '120'),
+
+    ('12345678901', 'Bruno Souza', 'B', 234567891,
+     'Savassi', 'Belo Horizonte', 'Avenida Brasil', '450'),
+
+    ('23456789012', 'Carla Oliveira', 'AB', 345678912,
+     'Pampulha', 'Belo Horizonte', 'Rua dos Ipês', '85'),
+
+    ('34567890123', 'Diego Santos', 'B', 456789123,
+     'Centro', 'Contagem', 'Rua Tiradentes', '300'),
+
+    ('45678901234', 'Eduarda Costa', 'B', 567891234,
+     'Eldorado', 'Contagem', 'Avenida João César', '720'),
+
+    ('56789012345', 'Felipe Almeida', 'AB', 678912345,
+     'Funcionários', 'Belo Horizonte', 'Rua Pernambuco', '95'),
+
+    ('67890123456', 'Gabriela Lima', 'B', 789123456,
+     'Buritis', 'Belo Horizonte', 'Rua Rubens Caporali', '210'),
+
+    ('78901234567', 'Henrique Martins', 'B', 891234567,
+     'Centro', 'Betim', 'Rua Pará de Minas', '55');
+
+-- 3. Veículos
+INSERT INTO VEICULO
+    (placa_veiculo, id_categoria, modelo_veiculo, ano_veiculo,
+     cor_veiculo, marca_veiculo, quilometragem_atual)
+VALUES
+    ('ABC1D23', 1, 'Mobi', 2023, 'Branco', 'Fiat', 15200.500),
+    ('DEF2G34', 2, 'Onix', 2024, 'Prata', 'Chevrolet', 8700.000),
+    ('GHI3J45', 3, 'Compass', 2023, 'Preto', 'Jeep', 22400.750),
+    ('JKL4M56', 4, 'Corolla Altis', 2024, 'Cinza', 'Toyota', 9100.250),
+    ('MNO5P67', 5, 'Fiorino', 2022, 'Branco', 'Fiat', 38700.000),
+    ('PQR6S78', 1, 'Kwid', 2024, 'Vermelho', 'Renault', 6300.500),
+    ('STU7V89', 2, 'HB20', 2023, 'Azul', 'Hyundai', 18400.000),
+    ('VWX8Y90', 3, 'Creta', 2025, 'Prata', 'Hyundai', 4200.250);
+
+-- 4. Locações
+INSERT INTO LOCACAO
+    (id_locacao, cpf_cliente, placa_veiculo, data_retirada,
+     data_devolucao, quilometragem_retirada, valor_total)
+VALUES
+    (1, '01234567890', 'ABC1D23',
+     '2026-01-05', '2026-01-08', 15200.500, 300.00),
+
+    (2, '12345678901', 'GHI3J45',
+     '2026-01-10', '2026-01-12', 22400.750, 500.00),
+
+    (3, '23456789012', 'DEF2G34',
+     '2026-01-15', '2026-01-20', 8700.000, 650.00),
+
+    (4, '34567890123', 'MNO5P67',
+     '2026-02-01', '2026-02-04', 38700.000, 600.00),
+
+    (5, '45678901234', 'PQR6S78',
+     '2026-02-10', '2026-02-12', 6300.500, 200.00),
+
+    (6, '56789012345', 'JKL4M56',
+     '2026-02-15', '2026-02-17', 9100.250, 900.00),
+
+    (7, '01234567890', 'STU7V89',
+     '2026-03-01', '2026-03-05', 18400.000, 520.00),
+
+    (8, '67890123456', 'VWX8Y90',
+     '2026-03-10', '2026-03-13', 4200.250, 750.00),
+
+    (9, '78901234567', 'ABC1D23',
+     '2026-03-20', '2026-03-22', 15500.000, 200.00),
+
+    (10, '12345678901', 'DEF2G34',
+     '2026-04-01', '2026-04-03', 9200.000, 260.00);
+
+-- SELECT * FROM CLIENTE;
+-- SELECT * FROM CATEGORIA_VEICULO;
+-- SELECT * FROM VEICULO;
+-- SELECT * FROM LOCACAO;
